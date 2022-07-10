@@ -8,21 +8,31 @@ const Table = () => {
     setUsers((prevState) => prevState.filter((user) => user._id !== userId));
   };
 
-  const setCorrectUserWord = () => {
-    const options = ["человек", "человека"];
-    let userWord;
-    if (users.length === 2 || users.length === 3 || users.length === 4) {
-      userWord = options[1];
-    } else {
-      userWord = options[0];
+  const getPeopleAmoount = () => {
+    const options = ["человек тусанет", "человека тусанут"];
+    let correctWordPeople;
+    if (users.length === 0) {
+      return (correctWordPeople = "Никто с тобой не тусанет.");
     }
-    return userWord;
+
+    if (users.length >= 2 && users.length <= 4) {
+      correctWordPeople = options[1];
+    } else {
+      correctWordPeople = options[0];
+    }
+    return String(users.length) + " " + `${correctWordPeople} с тобой сегодня.`;
   };
 
   const renderTable = () => {
-    return users.length !== 0 ? (
+    return (
       <>
-        <div>{`${users.length} ${setCorrectUserWord()}`}</div>
+        <h3>
+          <span
+            className={`badge bg-${users.length > 0 ? "primary" : "danger"}`}
+          >
+            {getPeopleAmoount()}
+          </span>
+        </h3>
         <table className="table">
           <thead>
             <tr>
@@ -64,8 +74,6 @@ const Table = () => {
           </tbody>
         </table>
       </>
-    ) : (
-      "Noone wants You"
     );
   };
   return renderTable();
