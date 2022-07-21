@@ -1,18 +1,20 @@
 import React, { useState } from "react";
-import api from "../api";
-import SearchStatus from "./searchStatus";
-import Bookmark from "./bookmark";
-
-const Users = () => {
-  const [users, setUsers] = useState(api.users.fetchAll());
-  const handleDelete = (userId) => {
-    setUsers(users.filter((user) => user._id !== userId));
+import { paginate } from "../utils/paginate";
+import Pagination from "./pagination";
+import User from "./user";
+import PropTypes from "prop-types";
+const Users = ({ users, ...rest }) => {
+  const count = users.length;
+  const pageSize = 4;
+  const [currentPage, setCurrentPage] = useState(1);
+  const handlePageChange = (pageIndex) => {
+    setCurrentPage(pageIndex);
   };
 
+  const userCrop = paginate(users, currentPage, pageSize);
   return (
     <>
-      {SearchStatus(users)}
-      {users.length > 0 && (
+      {count > 0 && (
         <table className="table">
           <thead>
             <tr>
@@ -26,40 +28,22 @@ const Users = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr key={user._id}>
-                <td>{user.name}</td>
-                <td>
-                  {user.qualities.map((item) => (
-                    <span
-                      className={"badge m-1 bg-" + item.color}
-                      key={item._id}
-                    >
-                      {item.name}
-                    </span>
-                  ))}
-                </td>
-                <td>{user.profession.name}</td>
-                <td>{user.completedMeetings}</td>
-                <td>{user.rate} /5</td>
-                <td>
-                  <Bookmark bookStatus={user.bookmark} />
-                </td>
-                <td>
-                  <button
-                    onClick={() => handleDelete(user._id)}
-                    className="btn btn-danger"
-                  >
-                    delete
-                  </button>
-                </td>
-              </tr>
+            {userCrop.map((user) => (
+              <User key={user._id} {...rest} {...user} />
             ))}
           </tbody>
         </table>
       )}
+      <Pagination
+        itemsCount={count}
+        pageSize={pageSize}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
+      />
     </>
   );
 };
-
+Users.propTypes = {
+  users: PropTypes.array.isRequired
+};
 export default Users;
