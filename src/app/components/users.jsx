@@ -3,10 +3,13 @@ import { paginate } from "../utils/paginate";
 import Pagination from "./pagination";
 import User from "./user";
 import PropTypes from "prop-types";
+import GroupList from "./groupList";
+import API from "../api";
 const Users = ({ users, ...rest }) => {
   const count = users.length;
   const pageSize = 4;
   const [currentPage, setCurrentPage] = useState(1);
+  const [professions, setProfession] = useState(API.professions.fetchAll());
   const handlePageChange = (pageIndex) => {
     setCurrentPage(pageIndex);
   };
@@ -14,6 +17,7 @@ const Users = ({ users, ...rest }) => {
   const userCrop = paginate(users, currentPage, pageSize);
   return (
     <>
+      <GroupList />
       {count > 0 && (
         <table className="table">
           <thead>
